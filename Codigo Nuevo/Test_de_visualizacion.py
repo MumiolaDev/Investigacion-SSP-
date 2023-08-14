@@ -5,12 +5,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+from bs4 import BeautifulSoup
 
-#Lista de urls con los datos directo desde la fuente
-urls = [
-    'https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/2023/psp_coho1hr_merged_mag_plasma_20230101_v01.cdf'
-]
+## Con esta funcion obtengo todos los archivos .cdf dentro del directorio url entregado
 
+def Get_CDF_Links(url):
+    respuesta = requests.get(url)
+    CDF_links = []
+    if respuesta.status_code == 200:
+        sopa = BeautifulSoup(respuesta.content, 'html.parser')
+        links = [ link.get('href') for link in sopa.find_all('a') ]
+
+        for link in links:
+            if link.endswith('.cdf'):
+                CDF_links.append(os.path.join(url, link))
+            elif link.endswith('/'):
+                CDF_links.extend(Get_CDF_Links(url+link))
+    return CDF_links
+
+# List con todos los links que me interesan
+urls = Get_CDF_Links('https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/')
 
 # Listas de datos con los que quiero trabajar
 epoch = np.array([])
@@ -32,12 +46,12 @@ flow_ion = np.array([])
 protonDensity = np.array([])
 protonTemp = np.array([])
 
-for url in urls:
+for url in urls[:3]:
     respuesta = requests.get(url)
     # A CADA URL VOY A SOLICITAR UNA RESPUESTA PARA ASEGURARME DE QUE
     # EL ARCHIVO SE OBTENGA DE MANERA CORRECTA
     if respuesta.status_code == 200:
-        
+        print(url)
         # Abro los archivos y los escribo en otro
         # archivo temporal para trabajarlo
         with open('tmp.cdf', 'wb') as tmp_file:
@@ -47,9 +61,9 @@ for url in urls:
         cdf = cdflib.CDF('tmp.cdf')
 
         # ESTOS SON LOS DATOS DE MAYOR INTERES
-        zVars = cdf.cdf_info().zVariables
+        # zVars = cdf.cdf_info().zVariables
         #print(data)
-        #zVars = ['Epoch', 'radialDistance', 'heliographicLatitude', 'heliographicLongitude', 
+        # zVars = ['Epoch', 'radialDistance', 'heliographicLatitude', 'heliographicLongitude', 
         # 'BR', 'BT', 'BN', 'B', 'VR', 'VT', 'VN', 'ProtonSpeed', 'flow_theta', 'flow_lon', 
         # 'protonDensity', 'protonTemp']
 
@@ -61,25 +75,29 @@ for url in urls:
         epoch =  np.concatenate( (epoch, cdf['Epoch']) ) 
         
         B  = np.concatenate( (B , cdf['B' ] ) )
-        BT = np.concatenate( (BT, cdf['BT'] ) )
-        BN = np.concatenate( (BN, cdf['BN'] ) )
+        #BT = np.concatenate( (BT, cdf['BT'] ) )
+        #BN = np.concatenate( (BN, cdf['BN'] ) )
+        radial_distance = np.concatenate( (radial_distance, cdf['radialDistance']))
+        
 
-
-        print(cdf.cdf_info())
+        #print(cdf.cdf_info())
 
     else:
         print(" URL INVALIDO:  "+url)
         print(respuesta)
+        
 
 print( B.size)
-print( BT.size)
-print( BN.size)
+#print( BT.size)
+#print( BN.size)
 
 n_samples = np.arange(B.size)
 
 #B_norm = B / np.sqrt(np.sum(B**2))
 #print( B.max())
 
-#plt.plot(n_samples[:100], B[:100], '.')
-#plt.ylim([B.min(), B.max()])
+#plt.plot(n_samples, radial_distance)
 #plt.show()
+
+for dat in radial_distance:
+    print(dat)
