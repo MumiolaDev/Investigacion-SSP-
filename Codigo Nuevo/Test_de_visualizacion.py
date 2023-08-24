@@ -1,4 +1,3 @@
-
 import requests
 import cdflib
 import pandas as pd
@@ -29,7 +28,7 @@ urls = Get_CDF_Links('https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/
 # Listas de datos con los que quiero trabajar
 epoch = np.array([])
 radial_distance = np.array([])
-heligraphicLatitude = np.array([])
+heliographicLatitude = np.array([])
 heliographicLongitude = np.array([])
 
 BR = np.array([])
@@ -57,7 +56,8 @@ def LimpiarDivergencias(datos_cdf):
     return datos_limpios
 
 cont = 0
-for url in urls[:36]:
+## son 12 urls por año menos para el 2023
+for url in urls[26:30]:
     respuesta = requests.get(url)
     # A CADA URL VOY A SOLICITAR UNA RESPUESTA PARA ASEGURARME DE QUE
     # EL ARCHIVO SE OBTENGA DE MANERA CORRECTA
@@ -84,27 +84,36 @@ for url in urls[:36]:
         # Por ahora solo trabajo con 1 set de datos
         
         #epoch = np.concatenate( (epoch, LimpiarDivergencias( cdf['Epoch'])) )
-        B  = np.concatenate( (B , LimpiarDivergencias(  cdf['B' ] ) ) )
+        #B  = np.concatenate( (B , LimpiarDivergencias(  cdf['B' ] ) ) )
         #BT = np.concatenate( (BT, cdf['BT'] ) )
         #BN = np.concatenate( (BN, cdf['BN'] ) )
         radial_distance = np.concatenate( (radial_distance,   LimpiarDivergencias(cdf['radialDistance'])) )
-        
-        #print("Cantida de datos agregados :")
-        #print( "Distancia radial:  ", radial_distance.size)
-        #print( "Campo Magnetico: ", B.size)
-        #print( "="*20)
+        heliographicLongitude = np.concatenate( (heliographicLongitude,   LimpiarDivergencias(cdf['heliographicLongitude'])) )
+        heliographicLatitude = np.concatenate( (heliographicLatitude,   LimpiarDivergencias(cdf['heliographicLatitude'])) )
+
         cont += 1
         print( "Meses cargados: ", cont)
 
     else:
         print(" URL INVALIDO:  "+url)
         print(respuesta)
-        
 
+heliographicLatitude = np.radians(heliographicLatitude)
+heliographicLongitude = np.radians(heliographicLongitude)
 
+#plt.polar(heliographicLongitude, radial_distance, '--')
+#print(heliographicLongitude.max(),heliographicLongitude.min())
+plt.plot(np.arange(heliographicLongitude.size), heliographicLongitude)
+#x_val = radial_distance*np.sin(heliographicLatitude)*np.cos(heliographicLongitude)
+#y_val = radial_distance*np.sin(heliographicLatitude)*np.sin(heliographicLongitude)
+#z_val = radial_distance*np.cos(heliographicLatitude)
 
-#n_samples = np.arange(radial_distance.size)
-n_samples = np.arange(B.size)
-#plt.plot(n_samples, radial_distance)
-plt.plot(n_samples, B)
+#fig = plt.figure()
+
+#ax = fig.add_subplot(111, projection='3d')
+#ax.plot(x_val,y_val,z_val)
+#ax.set_xlabel('X')
+#ax.set_ylabel('Y')
+#ax.set_zlabel('Z')
+#ax.scatter(0, 0,  color='yellow', s=100, label='Sol')
 plt.show()
