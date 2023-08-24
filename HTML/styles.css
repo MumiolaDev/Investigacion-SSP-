@@ -1,0 +1,58 @@
+/* Estilos generales */
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: lightslategrey;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+}
+
+section {
+    margin: 5rem;
+}
+
+/* Estilos para las ecuaciones */
+.ecuacion {
+    font-size: 1.5rem;
+    font-style: italic;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+/* Estilos para tablas */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para imágenes */
+img {
+    text-align: center;
+    max-width: 120%;
+    height: auto;
+    
+}
+
+/* Estilos para el footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+}

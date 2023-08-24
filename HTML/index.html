@@ -1,685 +1,169 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Portafolio Proyecto</title><style>
-/* cspell:disable-file */
-/* webkit printing magic: print all background colors */
-html {
-	-webkit-print-color-adjust: exact;
-}
-* {
-	box-sizing: border-box;
-	-webkit-print-color-adjust: exact;
-}
-
-html,
-body {
-	background-color: rgb(255, 238, 218);
-	margin: 0;
-	padding: 0;
-}
-@media only screen {
-	body {
-		margin: 2em auto;
-		max-width: 900px;
-		color: rgb(55, 53, 47);
-	}
-}
-
-body {
-	line-height: 1.5;
-	white-space: pre-wrap;
-}
-
-a,
-a.visited {
-	color: inherit;
-	text-decoration: underline;
-}
-
-.pdf-relative-link-path {
-	font-size: 80%;
-	color: #444;
-}
-
-h1,
-h2,
-h3 {
-	letter-spacing: -0.01em;
-	line-height: 1.2;
-	font-weight: 600;
-	margin-bottom: 0;
-}
-
-.page-title {
-	font-size: 2.5rem;
-	font-weight: 700;
-	margin-top: 0;
-	margin-bottom: 0.75em;
-}
-
-h1 {
-	font-size: 1.875rem;
-	margin-top: 1.875rem;
-}
-
-h2 {
-	font-size: 1.5rem;
-	margin-top: 1.5rem;
-}
-
-h3 {
-	font-size: 1.25rem;
-	margin-top: 1.25rem;
-}
-
-.source {
-	border: 1px solid #ddd;
-	border-radius: 3px;
-	padding: 1.5em;
-	word-break: break-all;
-}
-
-.callout {
-	border-radius: 3px;
-	padding: 1rem;
-}
-
-figure {
-	margin: 1.25em 0;
-	page-break-inside: avoid;
-}
-
-figcaption {
-	opacity: 0.5;
-	font-size: 85%;
-	margin-top: 0.5em;
-}
-
-mark {
-	background-color: transparent;
-}
-
-.indented {
-	padding-left: 1.5em;
-}
-
-hr {
-	background: transparent;
-	display: block;
-	width: 100%;
-	height: 1px;
-	visibility: visible;
-	border: none;
-	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-}
-
-img {
-	max-width: 100%;
-}
-
-@media only print {
-	img {
-		max-height: 100vh;
-		object-fit: contain;
-	}
-}
-
-@page {
-	margin: 1in;
-}
-
-.collection-content {
-	font-size: 0.875rem;
-}
-
-.column-list {
-	display: flex;
-	justify-content: space-between;
-}
-
-.column {
-	padding: 0 1em;
-}
-
-.column:first-child {
-	padding-left: 0;
-}
-
-.column:last-child {
-	padding-right: 0;
-}
-
-.table_of_contents-item {
-	display: block;
-	font-size: 0.875rem;
-	line-height: 1.3;
-	padding: 0.125rem;
-}
-
-.table_of_contents-indent-1 {
-	margin-left: 1.5rem;
-}
-
-.table_of_contents-indent-2 {
-	margin-left: 3rem;
-}
-
-.table_of_contents-indent-3 {
-	margin-left: 4.5rem;
-}
-
-.table_of_contents-link {
-	text-decoration: none;
-	opacity: 0.7;
-	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
-}
-
-table,
-th,
-td {
-	border: 1px solid rgba(55, 53, 47, 0.09);
-	border-collapse: collapse;
-}
-
-table {
-	border-left: none;
-	border-right: none;
-}
-
-th,
-td {
-	font-weight: normal;
-	padding: 0.25em 0.5em;
-	line-height: 1.5;
-	min-height: 1.5em;
-	text-align: left;
-}
-
-th {
-	color: rgba(55, 53, 47, 0.6);
-}
-
-ol,
-ul {
-	margin: 0;
-	margin-block-start: 0.6em;
-	margin-block-end: 0.6em;
-}
-
-li > ol:first-child,
-li > ul:first-child {
-	margin-block-start: 0.6em;
-}
-
-ul > li {
-	list-style: disc;
-}
-
-ul.to-do-list {
-	padding-inline-start: 0;
-}
-
-ul.to-do-list > li {
-	list-style: none;
-}
-
-.to-do-children-checked {
-	text-decoration: line-through;
-	opacity: 0.375;
-}
-
-ul.toggle > li {
-	list-style: none;
-}
-
-ul {
-	padding-inline-start: 1.7em;
-}
-
-ul > li {
-	padding-left: 0.1em;
-}
-
-ol {
-	padding-inline-start: 1.6em;
-}
-
-ol > li {
-	padding-left: 0.2em;
-}
-
-.mono ol {
-	padding-inline-start: 2em;
-}
-
-.mono ol > li {
-	text-indent: -0.4em;
-}
-
-.toggle {
-	padding-inline-start: 0em;
-	list-style-type: none;
-}
-
-/* Indent toggle children */
-.toggle > li > details {
-	padding-left: 1.7em;
-}
-
-.toggle > li > details > summary {
-	margin-left: -1.1em;
-}
-
-.selected-value {
-	display: inline-block;
-	padding: 0 0.5em;
-	background: rgba(206, 205, 202, 0.5);
-	border-radius: 3px;
-	margin-right: 0.5em;
-	margin-top: 0.3em;
-	margin-bottom: 0.3em;
-	white-space: nowrap;
-}
-
-.collection-title {
-	display: inline-block;
-	margin-right: 1em;
-}
-
-.page-description {
-    margin-bottom: 2em;
-}
-
-.simple-table {
-	margin-top: 1em;
-	font-size: 0.875rem;
-	empty-cells: show;
-}
-.simple-table td {
-	height: 29px;
-	min-width: 120px;
-}
-
-.simple-table th {
-	height: 29px;
-	min-width: 120px;
-}
-
-.simple-table-header-color {
-	background: rgb(247, 246, 243);
-	color: black;
-}
-.simple-table-header {
-	font-weight: 500;
-}
-
-time {
-	opacity: 0.5;
-}
-
-.icon {
-	display: inline-block;
-	max-width: 1.2em;
-	max-height: 1.2em;
-	text-decoration: none;
-	vertical-align: text-bottom;
-	margin-right: 0.5em;
-}
-
-img.icon {
-	border-radius: 3px;
-}
-
-.user-icon {
-	width: 1.5em;
-	height: 1.5em;
-	border-radius: 100%;
-	margin-right: 0.5rem;
-}
-
-.user-icon-inner {
-	font-size: 0.8em;
-}
-
-.text-icon {
-	border: 1px solid #000;
-	text-align: center;
-}
-
-.page-cover-image {
-	display: block;
-	object-fit: cover;
-	width: 100%;
-	max-height: 30vh;
-}
-
-.page-header-icon {
-	font-size: 3rem;
-	margin-bottom: 1rem;
-}
-
-.page-header-icon-with-cover {
-	margin-top: -0.72em;
-	margin-left: 0.07em;
-}
-
-.page-header-icon img {
-	border-radius: 3px;
-}
-
-.link-to-page {
-	margin: 1em 0;
-	padding: 0;
-	border: none;
-	font-weight: 500;
-}
-
-p > .user {
-	opacity: 0.5;
-}
-
-td > .user,
-td > time {
-	white-space: nowrap;
-}
-
-input[type="checkbox"] {
-	transform: scale(1.5);
-	margin-right: 0.6em;
-	vertical-align: middle;
-}
-
-p {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-
-.image {
-	border: none;
-	margin: 1.5em 0;
-	padding: 0;
-	border-radius: 0;
-	text-align: center;
-}
-
-.code,
-code {
-	background: rgba(135, 131, 120, 0.15);
-	border-radius: 3px;
-	padding: 0.2em 0.4em;
-	border-radius: 3px;
-	font-size: 85%;
-	tab-size: 2;
-}
-
-code {
-	color: #eb5757;
-}
-
-.code {
-	padding: 1.5em 1em;
-}
-
-.code-wrap {
-	white-space: pre-wrap;
-	word-break: break-all;
-}
-
-.code > code {
-	background: none;
-	padding: 0;
-	font-size: 100%;
-	color: inherit;
-}
-
-blockquote {
-	font-size: 1.25em;
-	margin: 1em 0;
-	padding-left: 1em;
-	border-left: 3px solid rgb(55, 53, 47);
-}
-
-.bookmark {
-	text-decoration: none;
-	max-height: 8em;
-	padding: 0;
-	display: flex;
-	width: 100%;
-	align-items: stretch;
-}
-
-.bookmark-title {
-	font-size: 0.85em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	height: 1.75em;
-	white-space: nowrap;
-}
-
-.bookmark-text {
-	display: flex;
-	flex-direction: column;
-}
-
-.bookmark-info {
-	flex: 4 1 180px;
-	padding: 12px 14px 14px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-}
-
-.bookmark-image {
-	width: 33%;
-	flex: 1 1 180px;
-	display: block;
-	position: relative;
-	object-fit: cover;
-	border-radius: 1px;
-}
-
-.bookmark-description {
-	color: rgba(55, 53, 47, 0.6);
-	font-size: 0.75em;
-	overflow: hidden;
-	max-height: 4.5em;
-	word-break: break-word;
-}
-
-.bookmark-href {
-	font-size: 0.75em;
-	margin-top: 0.25em;
-}
-
-.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
-.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
-.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
-.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
-.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
-.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
-.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
-.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
-.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
-.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
-.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
-.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
-.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
-.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
-.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
-.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
-.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
-.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
-.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
-.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
-.highlight-default {
-	color: rgba(55, 53, 47, 1);
-}
-.highlight-gray {
-	color: rgba(120, 119, 116, 1);
-	fill: rgba(120, 119, 116, 1);
-}
-.highlight-brown {
-	color: rgba(159, 107, 83, 1);
-	fill: rgba(159, 107, 83, 1);
-}
-.highlight-orange {
-	color: rgba(217, 115, 13, 1);
-	fill: rgba(217, 115, 13, 1);
-}
-.highlight-yellow {
-	color: rgba(203, 145, 47, 1);
-	fill: rgba(203, 145, 47, 1);
-}
-.highlight-teal {
-	color: rgba(68, 131, 97, 1);
-	fill: rgba(68, 131, 97, 1);
-}
-.highlight-blue {
-	color: rgba(51, 126, 169, 1);
-	fill: rgba(51, 126, 169, 1);
-}
-.highlight-purple {
-	color: rgba(144, 101, 176, 1);
-	fill: rgba(144, 101, 176, 1);
-}
-.highlight-pink {
-	color: rgba(193, 76, 138, 1);
-	fill: rgba(193, 76, 138, 1);
-}
-.highlight-red {
-	color: rgba(212, 76, 71, 1);
-	fill: rgba(212, 76, 71, 1);
-}
-.highlight-gray_background {
-	background: rgba(241, 241, 239, 1);
-}
-.highlight-brown_background {
-	background: rgba(244, 238, 238, 1);
-}
-.highlight-orange_background {
-	background: rgba(251, 236, 221, 1);
-}
-.highlight-yellow_background {
-	background: rgba(251, 243, 219, 1);
-}
-.highlight-teal_background {
-	background: rgba(237, 243, 236, 1);
-}
-.highlight-blue_background {
-	background: rgba(231, 243, 248, 1);
-}
-.highlight-purple_background {
-	background: rgba(244, 240, 247, 0.8);
-}
-.highlight-pink_background {
-	background: rgba(249, 238, 243, 0.8);
-}
-.highlight-red_background {
-	background: rgba(253, 235, 236, 1);
-}
-.block-color-default {
-	color: inherit;
-	fill: inherit;
-}
-.block-color-gray {
-	color: rgba(120, 119, 116, 1);
-	fill: rgba(120, 119, 116, 1);
-}
-.block-color-brown {
-	color: rgba(159, 107, 83, 1);
-	fill: rgba(159, 107, 83, 1);
-}
-.block-color-orange {
-	color: rgba(217, 115, 13, 1);
-	fill: rgba(217, 115, 13, 1);
-}
-.block-color-yellow {
-	color: rgba(203, 145, 47, 1);
-	fill: rgba(203, 145, 47, 1);
-}
-.block-color-teal {
-	color: rgba(68, 131, 97, 1);
-	fill: rgba(68, 131, 97, 1);
-}
-.block-color-blue {
-	color: rgba(51, 126, 169, 1);
-	fill: rgba(51, 126, 169, 1);
-}
-.block-color-purple {
-	color: rgba(144, 101, 176, 1);
-	fill: rgba(144, 101, 176, 1);
-}
-.block-color-pink {
-	color: rgba(193, 76, 138, 1);
-	fill: rgba(193, 76, 138, 1);
-}
-.block-color-red {
-	color: rgba(212, 76, 71, 1);
-	fill: rgba(212, 76, 71, 1);
-}
-.block-color-gray_background {
-	background: rgba(241, 241, 239, 1);
-}
-.block-color-brown_background {
-	background: rgba(244, 238, 238, 1);
-}
-.block-color-orange_background {
-	background: rgba(251, 236, 221, 1);
-}
-.block-color-yellow_background {
-	background: rgba(251, 243, 219, 1);
-}
-.block-color-teal_background {
-	background: rgba(237, 243, 236, 1);
-}
-.block-color-blue_background {
-	background: rgba(231, 243, 248, 1);
-}
-.block-color-purple_background {
-	background: rgba(244, 240, 247, 0.8);
-}
-.block-color-pink_background {
-	background: rgba(249, 238, 243, 0.8);
-}
-.block-color-red_background {
-	background: rgba(253, 235, 236, 1);
-}
-.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
-.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
-.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
-.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
-.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
-.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
-.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
-.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
-.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
-.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
-.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
-.select-value-color-pageGlass { background-color: undefined; }
-.select-value-color-washGlass { background-color: undefined; }
-
-.checkbox {
-	display: inline-flex;
-	vertical-align: text-bottom;
-	width: 16;
-	height: 16;
-	background-size: 16px;
-	margin-left: 2px;
-	margin-right: 5px;
-}
-
-.checkbox-on {
-	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
-}
-
-.checkbox-off {
-	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
-}
-	
-</style></head><body><article id="ef802791-7ba6-47c9-8276-357411f149b3" class="page sans"><header><img class="page-cover-image" src="https://www.notion.so/images/page-cover/nasa_eagle_in_lunar_orbit.jpg" style="object-position:center 40%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon">🔬</span></div><h1 class="page-title">Portafolio Proyecto</h1><p class="page-description"></p></header><div class="page-body"><h2 id="9be13379-c787-4550-bc96-8d43d7d74053" class="">Proyecto de Investigacion. Estudio del campo magnético y propiedades del viento solar en base a dato del satélite Parker Solar Probe (PSP) entre 2018 y 2023</h2><h3 id="cc74275d-ea13-4064-83d3-6424a2350949" class="">Autor:                Diego Orlando Passalacqua Gómez</h3><h3 id="25f7ace9-3a6b-47ee-8f2e-336d2935fdbc" class="">Profesor guía:   Pablo Moya.</h3><h3 id="de7377df-5d8d-4c15-a843-4e265df32cf6" class="">Descripcion del proyecto: </h3><p id="4d43112a-bfc3-4c33-934b-12602059c6e0" class="">El satélite Parker Solar Probe (PSP) fue lanzado el 12 de agosto de 2018 en una órbita heliocéntrica, utilizando múltiples asistencias gravitatorias de Venus ha alcanzado de momento un perihelio de aproximadamente 9.86 radios solares y un periodo de 96 días con respecto al sol. En sus 16 acercamientos completados, hasta el 22 de junio de 2023, ha recopilado diversas mediciones con el objetivo de estudiar los flujos de energía desde la corona solar, así como tambien determinar la estructura y dinámica del plasma y los campos magnéticos. El satélite PSP pretende continuar su misión hasta finales del 2025 alcanzando un total de 24 acercamientos, proporcionando una nueva fuente activa de experimentación e investigación sobre la dinámica del medio interplanetario.</p><p id="3d47f3e4-e7aa-4f79-a887-03ca813ceb99" class="">En este proyecto proponemos realizar un análisis sobre los datos publicados por Space Physics Data Facility (SPDF) de la misión PSP, correspondientes a distancia radial, latitud y longitud heliográfica, campo magnético y velocidad, densidad y temperatura del flujo de protones. Nos basaremos en estudios previos sobre fluctuaciones de campo magnético 
-y análisis de espectros de ondas electromagnéticas con el objetivo de determinar la dependencia radial de las propiedades medidas del medio.</p><hr id="89bfd83f-ee20-4402-a198-d10af72eb2ab"/><h2 id="f9968a1f-b4b3-4e02-b5fb-df13dfa8deeb" class="">Primeros pasos: Recoleccion de datos.</h2><p id="9cc48578-b873-4462-87ef-a25f4a38c72b" class="">Los datos los estoy sacando de la pagina: <mark class="highlight-blue"><a href="https://spdf.gsfc.nasa.gov/pub/">https://spdf.gsfc.nasa.gov/pub/</a></mark><mark class="highlight-blue">.</mark></p><p id="b862e968-9836-4c8c-acd6-a5ee582810ad" class="">Esta corresponde a un directorio llamado /pub/, el que contiene los datos de decenas de misiones espaciales. En este caso trabajaremos con los datos del satélite Parker Solar Probe.
-Estos datos corresponden a datos previamente trabajados por: <mark class="highlight-blue"><a href="https://hpde.io/NASA/NumericalData/ParkerSolarProbe/MAGandPLS/PT1H.html">https://hpde.io/NASA/NumericalData/ParkerSolarProbe/MAGandPLS/PT1H.html</a></mark></p><p id="3192c1f9-5764-4900-b750-335906d94dc3" class="">(The NSSDC Coordinated Heliospheric Observations Web, COHOWeb, hourly and daily Parker Solar Probe, PSP, data were made by using high resolution data from from CDAWeb.<strong>)</strong></p><p id="3553c44f-025e-4e8a-a48d-0636906fb5e6" class="">Estos datos contienen las siguientes variables:</p><table id="35b38e8c-c3be-40a0-aab3-89e4acfc2aef" class="simple-table"><thead class="simple-table-header"><tr id="c82d3fbf-cda7-4ced-a640-b251a346bf51"><th id=";n}t" class="simple-table-header-color simple-table-header" style="width:154.5px">Key</th><th id="}?GO" class="simple-table-header-color simple-table-header" style="width:439.5px">Parametro</th><th id="~JHK" class="simple-table-header-color simple-table-header">Unidades</th></tr></thead><tbody><tr id="34ed60dd-e3e0-4bbc-b83b-e2613418e538"><td id=";n}t" class="" style="width:154.5px">Epoch</td><td id="}?GO" class="" style="width:439.5px">Epoch</td><td id="~JHK" class="">ms</td></tr><tr id="47bea8d8-66da-40cb-9ffc-c39c111dfb44"><td id=";n}t" class="" style="width:154.5px">radialDistance</td><td id="}?GO" class="" style="width:439.5px">PSP Spacecraft Position, Heliocentric Radial Distance</td><td id="~JHK" class="">ua</td></tr><tr id="65bdc141-3b03-41ff-9743-eb27179579c5"><td id=";n}t" class="" style="width:154.5px">heliographicLatitude</td><td id="}?GO" class="" style="width:439.5px">PSP Spacecraft Position, Latitude, HGI Coordinates</td><td id="~JHK" class="">°</td></tr><tr id="9d239865-7224-490f-9a8b-6bc95e9bf5c4"><td id=";n}t" class="" style="width:154.5px">heliographicLongitude</td><td id="}?GO" class="" style="width:439.5px">PSP Spacecraft Position, Longitude, HGI Coordinates</td><td id="~JHK" class="">°</td></tr><tr id="9a9cdd1f-4ec7-44b8-b8d0-c4e9f5539ca4"><td id=";n}t" class="" style="width:154.5px">BR</td><td id="}?GO" class="" style="width:439.5px">Interplanetary Magnetic Field, R-component, RTN Coordinates</td><td id="~JHK" class="">nT</td></tr><tr id="20aa28fb-583c-4d72-87ce-eef30620c385"><td id=";n}t" class="" style="width:154.5px">BT</td><td id="}?GO" class="" style="width:439.5px">Interplanetary Magnetic Field, T-component, RTN Coordinates</td><td id="~JHK" class="">nT</td></tr><tr id="c320a4e9-8566-416d-abba-f0e2a0a78e31"><td id=";n}t" class="" style="width:154.5px">BN</td><td id="}?GO" class="" style="width:439.5px">Interplanetary Magnetic Field, N-component, RTN Coordinates
-Set</td><td id="~JHK" class="">nT</td></tr><tr id="0c00daa4-eb85-4b0f-ad8d-fe5219291617"><td id=";n}t" class="" style="width:154.5px">B</td><td id="}?GO" class="" style="width:439.5px">Interplanetary Magnetic Field, B, Vector Magnitude</td><td id="~JHK" class="">nT</td></tr><tr id="73448fe5-8180-4248-bf3f-b38ec73e6afd"><td id=";n}t" class="" style="width:154.5px">VR</td><td id="}?GO" class="" style="width:439.5px">Proton Velocity, R-component, RTN Coordinates</td><td id="~JHK" class="">km/s</td></tr><tr id="1b5f421c-ae25-404f-a1ff-8fdc8b5e444c"><td id=";n}t" class="" style="width:154.5px">VT</td><td id="}?GO" class="" style="width:439.5px">Proton Velocity, T-component, RTN Coordinates</td><td id="~JHK" class="">km/s</td></tr><tr id="4f87439f-b725-4c16-ac16-69bf3c7cdce7"><td id=";n}t" class="" style="width:154.5px">VN</td><td id="}?GO" class="" style="width:439.5px">Proton Velocity, N-component, RTN Coordinates</td><td id="~JHK" class="">km/s</td></tr><tr id="eece16fd-1fdd-425f-9681-67bf14793e7d"><td id=";n}t" class="" style="width:154.5px">ProtonSpeed</td><td id="}?GO" class="" style="width:439.5px">Proton Bulk Speed, V</td><td id="~JHK" class="">km/s</td></tr><tr id="d7235487-ae47-4696-97bb-74453d92291c"><td id=";n}t" class="" style="width:154.5px">flow_theta</td><td id="}?GO" class="" style="width:439.5px">Proton Flow Elevation Angle, θ, RTN Coordinates</td><td id="~JHK" class="">°</td></tr><tr id="5adefb3c-1cf6-4807-b74c-9c97ad2dabab"><td id=";n}t" class="" style="width:154.5px">flow_lon</td><td id="}?GO" class="" style="width:439.5px">Proton Flow Azimuth Angle, ϕ, RTN Coordinates</td><td id="~JHK" class="">°</td></tr><tr id="1b6a1c4e-df88-4c76-8a49-610922896e3e"><td id=";n}t" class="" style="width:154.5px">protonDensity</td><td id="}?GO" class="" style="width:439.5px">Proton Density, n</td><td id="~JHK" class="">cm^-3</td></tr><tr id="ff53d011-758c-4468-b4fb-e9c639955068"><td id=";n}t" class="" style="width:154.5px">protonTemp</td><td id="}?GO" class="" style="width:439.5px">Proton Temperature, T</td><td id="~JHK" class="">°K</td></tr></tbody></table><p id="390cc425-a52b-46fe-bd58-30242476b322" class="">Los datos totales vienen dados por mes, con 24 mediciones por dia, desde 1 de enero de 2018 hasta 31 de enero de 2023. El siguiente sitio web nos permite tener una rápida visualizacion de los datos disponibles: </p><figure id="6a096a8e-ebf6-464b-bc1f-b90061daed2f"><a href="https://heliophysicsdata.gsfc.nasa.gov/websearch/dispatcher" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Heliophysics Data Portal- Solar Space Physics Product Finder</div><div class="bookmark-description">The Heliophysics Data Portal makes data easily available from all missions relevant to the global problem of the effects of solar particles and fields on the Earth and the solar system.</div></div><div class="bookmark-href"><img src="https://heliophysicsdata.gsfc.nasa.gov/websearch/include/favicon.ico" class="icon bookmark-icon"/>https://heliophysicsdata.gsfc.nasa.gov/websearch/dispatcher</div></div></a></figure><p id="d2f521a0-0f29-466e-afdf-dbe9459fbd42" class="">Buscando “PSP”, el primer producto:</p><p id="960c58a0-ed1e-40b5-be0e-3c03dce50ba9" class=""><a href="https://hpde.io/NASA/NumericalData/ParkerSolarProbe/MAGandPLS/PT1H.html">https://hpde.io/NASA/NumericalData/ParkerSolarProbe/MAGandPLS/PT1H.html</a></p><p id="57c9f94c-af08-4be2-ae68-cd3272028560" class="">podemos hacer click en: “Get Data/Plots”  para obtener una sensilla previsualizacion de los datos en el rango de tiempo ingresado. En el siguient ejemplo corresponde a una simple visualizacion de la totalidad de los datos. Como se puuede ver en el primer gráfico, los datos contienen 14 acercamientos totales.</p><p id="42052b05-8553-4be9-95e0-f88902ba70c2" class="">
-</p><figure id="51793c82-f2bc-43fa-a649-243a715ee4bb" class="image"><a href="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/campos_magneticos.png"><img style="width:640px" src="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/campos_magneticos.png"/></a></figure><figure id="b4c5444a-b0df-4094-b276-fca2c8b08f04" class="image"><a href="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/distancias.png"><img style="width:640px" src="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/distancias.png"/></a></figure><figure id="12d760ba-f230-4f38-b232-af693fb0e7a3" class="image"><a href="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/otros.png"><img style="width:640px" src="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/otros.png"/></a></figure><figure id="9f6e81ec-5345-4716-8667-78d105a4a3f0" class="image"><a href="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/protones.png"><img style="width:640px" src="Portafolio%20Proyecto%20ef8027917ba647c98276357411f149b3/protones.png"/></a></figure><h1 id="de4c942b-fb85-4cc1-8d80-e2cf18e3c3d1" class="">Primeros objetivos generales para el tratamiento de datos:</h1><ul id="7df7708e-c327-474f-88cf-aa50bef81e8d" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Recrear los gráficos de campo magnetico anteriores y ver si puedo agregar barras de error e incluir los datos nuevos que hay disponibles.</span><div class="indented"></div></li></ul><ul id="e269dba9-cbf3-4847-80f3-efabf34ac011" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Hacer ese mismo gráfico pero centrandome solo en la parte del acercamiento al sol y comparar entre los años.</span><div class="indented"></div></li></ul><ul id="0685e35d-da0d-4a36-a384-5483a9a68d0e" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Comparar los valores de campo magnético, normal y tangencial, con el valor promedio en ese momento. Graficar las fluctuaciones. </span><div class="indented"></div></li></ul><ul id="9bb382f6-1a03-44c6-a3d2-e00f8ad8f5bd" class="to-do-list"><li><div class="checkbox checkbox-off"></div> <span class="to-do-children-unchecked">Tratar de mapear las fluctuaciones en los distintos barridos de la órbita.</span><div class="indented"></div></li></ul><p id="81b35c28-a6bc-46ce-bfa8-af69916ffb0a" class="">
-</p><p id="0aae5a98-47df-409d-ab3f-6004afd88806" class="">
-</p><p id="f745ef03-2c11-4c69-b736-6398ada69cfb" class="">
-</p><p id="6e77ae83-3867-48e2-82f4-072147259b5d" class="">
-</p></div></article></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Mi Portafolio de Investigación</title>
+</head>
+
+<body>
+    <header>
+        <h1>Portafolio de Investigación</h1>
+    </header>
+    
+    <section id="intro">
+        <h2> Nombre del proyecto: Estudio del campo magnético y propiedades del viento 
+            solar en base a dato del satélite Parker Solar Probe (PSP) entre 2018 y 2023</h2>
+            
+        <h3> Descripcion: </h3>
+        <p> 
+            El satélite Parker Solar Probe (PSP) fue lanzado el 12 de agosto de 2018 en una órbita heliocéntrica, 
+            utilizando múltiples asistencias gravitatorias de Venus ha alcanzado de momento un perihelio de 
+            aproximadamente 9.86 radios solares y un periodo de 96 días con respecto al sol.
+            En sus 16 acercamientos completados, hasta el 22 de junio de 2023, ha recopilado diversas mediciones 
+            con el objetivo de estudiar los flujos de energía desde la corona solar, así como tambien determinar 
+            la estructura y dinámica del plasma y los campos magnéticos. El satélite PSP pretende continuar 
+            su misión hasta finales del 2025 alcanzando un total de 24 acercamientos, proporcionando una nueva fuente 
+            activa de experimentación e investigación sobre la dinámica del medio interplanetario.
+            En este proyecto proponemos realizar un análisis sobre los datos publicados por 
+            Space Physics Data Facility (SPDF) de la misión PSP, correspondientes a distancia radial, latitud y 
+            longitud heliográfica, campo magnético y velocidad, densidad y temperatura del flujo de protones. 
+            Nos basaremos en estudios previos sobre fluctuaciones de campo magnético 
+            y análisis de espectros de ondas electromagnéticas con el objetivo de determinar la dependencia radial 
+            de las propiedades medidas del medio.
+        </p>
+
+    </section>
+
+    <section>
+        <h1> Primeros pasos: Sobre la recoleccion de datos</h1>
+        <p>
+            Los datos los estoy sacando de la pagina: 
+            <a href = "https://spdf.gsfc.nasa.gov/pub/"> SPFF Data Pub </a>.
+            Esta corresponde a un directorio llamado /pub/, el que contiene los datos de decenas de misiones espaciales. 
+            En este caso trabajaremos con los datos del satélite Parker Solar Probe.
+            Estos datos corresponden a datos previamente trabajados por: 
+            <a href="https://hpde.io/NASA/NumericalData/ParkerSolarProbe/MAGandPLS/PT1H.html">SPASE Resource Description</a>.
+            <br>
+            (The NSSDC Coordinated Heliospheric Observations Web, COHOWeb, hourly and daily Parker Solar Probe, PSP, data were made by using high resolution data from from CDAWeb.)
+            <br>
+            Estos datos contienen las siguientes variables:
+        </p>
+    </section>
+    <section id="datos">
+        <table>
+            <tr>
+                <th>Nombre clave</th>
+                <th>Parámetro</th>
+                <th>Unidades</th>
+            </tr>
+            <tr>
+                <td>Epoch</td>
+                <td>Epoch</td>
+                <td>ms</td>
+            </tr>
+            <tr>
+                <td>radialDistance </td>
+                <td>PSP Spacecraft Position, Heliocentric Radial Distance</td>
+                <td>ua</td>
+            </tr>
+            <tr>
+                <td>heliographicLatitude</td>
+                <td>PSP Spacecraft Position, Latitude, HGI Coordinates</td>
+                <td>°</td>
+            </tr>
+            <tr>
+                <td>heliographicLongitude</td>
+                <td>PSP Spacecraft Position, Longitude, HGI Coordinates</td>
+                <td>°</td>
+            </tr> 
+            <tr>
+                <td>BR</td>
+                <td>nterplanetary Magnetic Field, R-component, RTN Coordinates</td>
+                <td>nT</td>
+            </tr>
+            <tr>
+                <td>BT</td>
+                <td>Interplanetary Magnetic Field, T-component, RTN Coordinates</td>
+                <td>nT</td>
+            </tr>
+            <tr>
+                <td>BN</td>
+                <td>Interplanetary Magnetic Field, N-component, RTN Coordinates Set</td>
+                <td>nT</td>
+            </tr>
+            <tr>
+                <td>B</td>
+                <td>Interplanetary Magnetic Field, B, Vector Magnitude</td>
+                <td>nT</td>
+            </tr>
+            <tr>
+                <td>VR</td>
+                <td>Proton Velocity, R-component, RTN Coordinates</td>
+                <td>km/s</td>
+            </tr>
+            <tr>
+                <td>VT</td>
+                <td>Proton Velocity, T-component, RTN Coordinates</td>
+                <td>km/s</td>
+            </tr>
+            <tr>
+                <td>VN</td>
+                <td>Proton Velocity, N-component, RTN Coordinates</td>
+                <td>km/s</td>
+            </tr>
+            <tr>
+                <td>ProtonSpeed</td>
+                <td>Proton Bulk Speed, V</td>
+                <td>km/s</td>
+            </tr>
+            <tr>
+                <td>flow_tdeta</td>
+                <td>Proton Flow Elevation Angle, θ, RTN Coordinates</td>
+                <td>°</td>
+            </tr>
+            <tr>
+                <td>flow_lon</td>
+                <td>Proton Flow Azimutd Angle, ϕ, RTN Coordinates</td>
+                <td>°</td>
+            </tr>
+            <tr>
+                <td>protonDensity</td>
+                <td>Proton Density, n</td>
+                <td>cm^-3</td>
+            </tr>
+            <tr>
+                <td>protonTemp</td>
+                <td>Proton Temperature, T</td>
+                <td>°K</td>
+            </tr>
+        </table>
+    
+        <p>Los datos totales vienen dados por mes, con 24 mediciones por dia, 
+        desde 1 de enero de 2018 hasta 31 de enero de 2023. 
+        El siguiente sitio web nos permite tener una rápida visualizacion de los datos disponibles:
+        <br>
+        <a href="https://heliophysicsdata.gsfc.nasa.gov/websearch/dispatcher"  >Heliophysics Data Portal</a>
+
+        Buscando “PSP”, el primer producto:    
+        podemos hacer click en: “Get Data/Plots”  para obtener una sensilla previsualizacion de los datos en el rango de 
+        tiempo ingresado. En el siguient ejemplo corresponde a una simple visualizacion de la totalidad de los datos. 
+        Como se puede ver en los siguientes gráficos, los datos contienen 14 acercamientos totales que vamos a trabajar
+        </p>
+        <div style="text-align: center;">
+            <img src="img\campos_magneticos.png" alt="Campo magnético">
+            <img src="img\distancias.png" alt="Campo magnético">
+            <img src="img\protones.png" alt="Campo magnético">
+            <img src="img\otros.png" alt="Campo magnético">
+        </div>
+    </section>
+
+    
+    <footer>
+        <p>&copy; Diego Orlando Passalacqua Gómez.<br>
+        diego.passalacqua@ug.uchile.cl
+        </p>
+    </footer>
+</body>
+</html>
