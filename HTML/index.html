@@ -14,7 +14,7 @@
     
     <section id="intro">
         <h2> Nombre del proyecto: Estudio del campo magnético y propiedades del viento 
-            solar en base a dato del satélite Parker Solar Probe (PSP) entre 2018 y 2023</h2>
+            solar en base a datos del satélite Parker Solar Probe (PSP) entre 2018 y 2023</h2>
             
         <h3> Descripcion: </h3>
         <p> 
@@ -139,29 +139,51 @@
                 <td>°K</td>
             </tr>
         </table>
-    
+    </section>
+    <section>
         <p>Los datos totales vienen dados por mes, con 24 mediciones por dia, 
         desde 1 de enero de 2018 hasta 31 de enero de 2023. 
-        El siguiente sitio web nos permite tener una rápida visualizacion de los datos disponibles:
-        <br>
-        <a href="https://heliophysicsdata.gsfc.nasa.gov/websearch/dispatcher"  >Heliophysics Data Portal</a>
-
-        Buscando “PSP”, el primer producto:    
-        podemos hacer click en: “Get Data/Plots”  para obtener una sensilla previsualizacion de los datos en el rango de 
-        tiempo ingresado. En el siguient ejemplo corresponde a una simple visualizacion de la totalidad de los datos. 
-        Como se puede ver en los siguientes gráficos, los datos contienen 14 acercamientos totales que vamos a trabajar
-        </p>
+        Utilizando la herramienta <a href="https://heliophysicsdata.gsfc.nasa.gov/websearch/dispatcher"> Heliophyisics Data Portal</a> 
+        y seleccionando los datos previamente mencionados podemos visualizar, de manera simple, la totalidad
+        de los datos recolectados entre 2018 y 2023</p>
+        
         <div style="text-align: center;">
-            <img src="img\campos_magneticos.png" alt="Campo magnético">
-            <img src="img\distancias.png" alt="Campo magnético">
-            <img src="img\protones.png" alt="Campo magnético">
-            <img src="img\otros.png" alt="Campo magnético">
+            <img src="img/TotalidadDatos.gif">
         </div>
-    </section>
-
+    <p>
+        Esto solo sirve como una simple visualización. Para poder utilizar los datos correctamente
+      debemos trabajarlos antes.
+    </p> 
+        <h2> Campo magnético</h2>
+        <p> Ahora, lo que haremos será utilizar una escala logarítmica
+            para los valores de campo magnético, esto nos permitirá visualizar mas 
+            facil mente el comportamiento de los valores
+        </p>
+        <div class="galeria">
+            <div class = 'caja'>
+                <img src="img\R-B.png" alt="Magnitud campo">
+            </div>
+            <div class = 'caja'>
+                <img src="img\R-BT.png" >
+            </div>
+            <div class = 'caja'>
+                <img src="img\R-BN.png" >
+            </div>
+            <div class = 'caja'>
+                <img src="img\R-BT.png" >
+            </div>
+        </div>
     
+
+    <p>Ahora, considerando los valore de la magnitud del campo, podemos realizar un histograma 2D
+        para entender la densidad de estos valores
+    </p>
+    <div style="text-align: center;">
+        <img src="img/HistogramaMagnitudCampoMagn.png">
+    </div>
+    </section>
     <footer>
-        <p>&copy; Diego Orlando Passalacqua Gómez.<br>
+        <p> Diego Orlando Passalacqua Gómez.<br>
         diego.passalacqua@ug.uchile.cl
         </p>
     </footer>
