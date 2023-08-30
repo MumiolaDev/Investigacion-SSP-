@@ -50,6 +50,8 @@ def ObtenerDatas(data_keys, desde= 0, hasta = -1):
     for url in urls[desde:hasta]:
         respuesta = requests.get(url)
         if respuesta.status_code == 200:
+
+
             with open('tmp.cdf', 'wb') as tmp_file:
                 tmp_file.write(respuesta.content)
 
@@ -62,7 +64,6 @@ def ObtenerDatas(data_keys, desde= 0, hasta = -1):
             cont += 1
             print( "Meses cargados: ", cont)
 
-    tmp_file.close()
     return tmp_data
 
 def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
@@ -87,6 +88,6 @@ def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
             cont += 1
             print( "Meses cargados: ", cont)
 
-    tmp_file.close()
+    #tmp_file.close()
     return tmp_data
         
