@@ -32,7 +32,7 @@ def Get_CDF_Links(url):
 def LimpiarDivergencias(datos_cdf):
     datos_limpios = []
     for dat in datos_cdf:
-        if abs(dat) < 9999:
+        if abs(dat) < 1e30:
             datos_limpios.append(dat)
         else:
             datos_limpios.append(np.nan)
@@ -90,4 +90,3 @@ def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
 
     #tmp_file.close()
     return tmp_data
-        
