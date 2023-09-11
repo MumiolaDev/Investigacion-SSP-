@@ -29,46 +29,103 @@ def Get_CDF_Links(url):
                 CDF_links.extend(Get_CDF_Links(url+link))
     return CDF_links
 
-def LimpiarDivergencias(datos_cdf):
+def LimpiarDivergencias(datos_cdf, tol = 1e30):
     datos_limpios = []
     for dat in datos_cdf:
-        if abs(dat) < 1e30:
+        
+        if np.any(dat) < tol:
             datos_limpios.append(dat)
         else:
             datos_limpios.append(np.nan)
-    
+
     return datos_limpios
+
+def LimpiarZeros(datos_cdf, tol = 1e-16):
+    datos_limpios=[]
+    for dat in datos_cdf:
+        if np.abs(dat) < tol:
+            datos_limpios.append(0)
+        else:
+            datos_limpios.append(dat)
+
+    return datos_limpios
+
+def GetCDF_info(link):
+    respuesta = requests.get(link)
+    print('abriendo')
+    vars = []
+    if respuesta.status_code == 200:
+        print('link correcto')
+        with open('tmp.cdf', 'wb') as tmp_file:
+            print('escribiendo')
+            tmp_file.write(respuesta.content)
+            cdf = cdflib.CDF('tmp.cdf')
+            vars = cdf.zVariables
+            cdf.close()
+
+    return vars
+
 
 ## En esta funcion le entregas las llaves 
 ## data_keys = ["B", "BT", "BN",...]
 ## y devuelve un array con los datos separados 
 ## en el mismo orden que las data_keys
-def ObtenerDatas(data_keys, desde= 0, hasta = -1):
+
+def ObtenerDatas(data_keys,
+                 desde=0,hasta = -1,
+                 link_origen='https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/',
+                 carpeta=''):
+    print('Juntand Links...')
     cont = 0
-    urls = Get_CDF_Links('https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/')
-    tmp_data = [np.array([]) for _ in range(len(data_keys))]
+    urls = Get_CDF_Links(link_origen)
+    print(len(urls))
+    tmp_data = []
     for url in urls[desde:hasta]:
-        respuesta = requests.get(url)
-        if respuesta.status_code == 200:
+        filename= carpeta+'\data_'+str(cont)+'.cdf'
 
-
-            with open('tmp.cdf', 'wb') as tmp_file:
-                tmp_file.write(respuesta.content)
-
-            cdf = cdflib.CDF('tmp.cdf')
+        if os.path.isfile(filename):
+            print('DATO YA DESCARGADO')
+            cdf = cdflib.CDF(filename)
             index = 0
+            tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
+            print('Cargando set de datos numero: '+str(cont))
             for data_key in data_keys:
-                tmp_data[index] = np.concatenate( (tmp_data[index], LimpiarDivergencias(cdf[data_key])) )
+                tmp_data[index] = np.concatenate( (tmp_data[index], cdf[data_key]) )
                 index += 1
-
+            
             cont += 1
-            print( "Meses cargados: ", cont)
+        else:
+            respuesta = requests.get(url)
+            if respuesta.status_code == 200:
+                with open(filename, 'wb') as tmp_file:
+                    print('Descargando set de datos numero: '+str(cont))
+                    tmp_file.write(respuesta.content)
+                    tmp_file.close()
 
+                cdf = cdflib.CDF(filename)
+
+                index = 0
+                tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
+
+                for data_key in data_keys:
+                    tmp_data[index] = np.concatenate( (tmp_data[index], cdf[data_key]) )
+                    index += 1
+                
+                cont += 1
+            else:
+                print('Link malo')
+                return []
+        
     return tmp_data
+                
+        
+field_mag_link ='https://spdf.gsfc.nasa.gov/pub/data/psp/fields/l2/mag_rtn/'
+data = ObtenerDatas(data_keys=['epoch_mag_RTN', 'psp_fld_l2_mag_RTN'] ,
+desde=75,hasta=80, link_origen=field_mag_link, carpeta="Codigo Nuevo\FIELDS" )
+print(data[0])
 
 def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
     cont = 0
-    ## son 12 urls por año menos para el 2023
     urls = Get_CDF_Links('https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/')
     tmp_data = np.array([])
     for url in urls[desde:hasta]:
@@ -84,9 +141,10 @@ def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
 
             # Usando la libreria cdflib, puedo obtener facilmente la data
             cdf = cdflib.CDF('tmp.cdf')
-            tmp_data = np.concatenate( (tmp_data, LimpiarDivergencias(cdf[data_key])) )
+            tmp_data = np.concatenate( (tmp_data, cdf[data_key]) )
             cont += 1
             print( "Meses cargados: ", cont)
 
-    #tmp_file.close()
+    os.remove('tmp.cdf')
     return tmp_data
+
