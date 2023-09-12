@@ -75,8 +75,9 @@ def ObtenerDatas(data_keys,
                  desde=0,hasta = -1,
                  link_origen='https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/',
                  carpeta=''):
-    print('Juntand Links...')
-    cont = 0
+    
+    print('Juntando Links...')
+    cont = desde
     urls = Get_CDF_Links(link_origen)
     print(len(urls))
     tmp_data = []
@@ -84,15 +85,15 @@ def ObtenerDatas(data_keys,
         filename= carpeta+'\data_'+str(cont)+'.cdf'
 
         if os.path.isfile(filename):
-            print('DATO YA DESCARGADO')
             cdf = cdflib.CDF(filename)
             index = 0
-            tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
+            if len(tmp_data)==0:
+                tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
+            
             print('Cargando set de datos numero: '+str(cont))
             for data_key in data_keys:
                 tmp_data[index] = np.concatenate( (tmp_data[index], cdf[data_key]) )
                 index += 1
-            
             cont += 1
         else:
             respuesta = requests.get(url)
@@ -103,10 +104,10 @@ def ObtenerDatas(data_keys,
                     tmp_file.close()
 
                 cdf = cdflib.CDF(filename)
-
+                #print(cdf.cdf_info().zVariables)
                 index = 0
-                tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
-
+                if len(tmp_data)==0:
+                    tmp_data = [np.empty_like(cdf[data_key]) for data_key in data_keys ]
                 for data_key in data_keys:
                     tmp_data[index] = np.concatenate( (tmp_data[index], cdf[data_key]) )
                     index += 1
@@ -118,33 +119,3 @@ def ObtenerDatas(data_keys,
         
     return tmp_data
                 
-        
-field_mag_link ='https://spdf.gsfc.nasa.gov/pub/data/psp/fields/l2/mag_rtn/'
-data = ObtenerDatas(data_keys=['epoch_mag_RTN', 'psp_fld_l2_mag_RTN'] ,
-desde=75,hasta=80, link_origen=field_mag_link, carpeta="Codigo Nuevo\FIELDS" )
-print(data[0])
-
-def ObtenerSingleData(data_key, desde = 0, hasta = -1 ):
-    cont = 0
-    urls = Get_CDF_Links('https://spdf.gsfc.nasa.gov/pub/data/psp/coho1hr_magplasma/cdf/')
-    tmp_data = np.array([])
-    for url in urls[desde:hasta]:
-        respuesta = requests.get(url)
-        # A CADA URL VOY A SOLICITAR UNA RESPUESTA PARA ASEGURARME DE QUE
-        # EL ARCHIVO SE OBTENGA DE MANERA CORRECTA
-        if respuesta.status_code == 200:
-            #print(url)
-            # Abro los archivos y los escribo en otro
-            # archivo temporal para trabajarlo
-            with open('tmp.cdf', 'wb') as tmp_file:
-                tmp_file.write(respuesta.content)
-
-            # Usando la libreria cdflib, puedo obtener facilmente la data
-            cdf = cdflib.CDF('tmp.cdf')
-            tmp_data = np.concatenate( (tmp_data, cdf[data_key]) )
-            cont += 1
-            print( "Meses cargados: ", cont)
-
-    os.remove('tmp.cdf')
-    return tmp_data
-
