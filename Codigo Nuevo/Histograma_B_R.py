@@ -82,18 +82,20 @@ rangos_de_tiempo = []
 #    final = perihelio + ventana_temporal / 2
 #    rangos_de_tiempo.append((inicio, final))
 
-polinomios = []
+
 
 rangos_de_tiempo = [
     (datetime.fromisoformat('2022-01-01').timestamp(),datetime.fromisoformat('2023-01-01').timestamp()),#1-2
-    (datetime.fromisoformat('2023-01-01').timestamp(),datetime.fromisoformat('2023-04-01').timestamp())
+    (datetime.fromisoformat('2023-01-01').timestamp(),datetime.fromisoformat('2023-04-30').timestamp())
  ] #2-3
+
+polinomios = []
 
 def yfit(x):
     #return np.power(10, poly(np.log10(x)))
     return poly(np.log10(x))
 
-fig, axs = plt.subplots(1, 2, figsize=(12,9) )
+fig, axs = plt.subplots(1, 2, figsize=(13,6) )
 
 for i, (inicio, final) in enumerate(rangos_de_tiempo):
     # Filtrar datos según el rango de tiempo
@@ -134,8 +136,8 @@ for i, (inicio, final) in enumerate(rangos_de_tiempo):
     h, xedges, yedges, im = ax.hist2d(valid_R, valid_B, bins=(R_bins, B_bins), norm=colors.LogNorm(), cmap='plasma', density=True)
     #ax.plot(valid_R, yfit(valid_R), '--', label=str(poly), c='black')
     ax.set_ylabel('B  nT')
-    ax.set_xlabel('R                                     AU')
-    #ax.set_title( str(fechas_perihelio_str[i].date()))
+    ax.set_xlabel('R  AU')
+    ax.set_title( 'Año '+str(2022+i))
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.tick_params(axis='x', direction = 'in', which='both', labelrotation=25, labelsize = 8)

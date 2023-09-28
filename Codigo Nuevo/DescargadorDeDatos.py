@@ -4,10 +4,11 @@ from CargadorDeDatos import *
 #url_principal = 'https://spdf.gsfc.nasa.gov/pub/data/psp/fields/l2/mag_rtn/'
 #url_principal = 'https://spdf.gsfc.nasa.gov/pub/data/psp/fields/l3/sqtn_rfs_v1v2/'
 #url_ephemeris = 'https://spdf.gsfc.nasa.gov/pub/data/psp/ephemeris/helio1day/'
-url_principal = 'https://spdf.gsfc.nasa.gov/pub/data/psp/sweap/spi/l3/spi_sf00_mom_inst/'
+#url_principal = 'https://spdf.gsfc.nasa.gov/pub/data/psp/sweap/spi/l3/spi_sf00_mom_inst/'
+url_principal = 'https://spdf.gsfc.nasa.gov/pub/data/psp/sweap/spc/l3/l3i/'
 
 # Directorio donde deseas guardar los archivos descargados
-directorio_descargas = 'SWEAP_SPI_proton/'
+directorio_descargas = 'SWEAP_SPC_proton/'
 
 # Crea el directorio de descargas principal si no existe
 os.makedirs(directorio_descargas, exist_ok=True)
