@@ -84,15 +84,27 @@ def descargar_archivos_desde_url(url, download_directory):
         descargar_archivos_desde_url(url, download_directory)
 
 
+def filtrar_chunks(epoch_chunks, data_chunks, tiempo_anterior, tiempo_posterior):
+    indices_filtrados = []  # Almacena los índices de "chunks" válidos
+    data_filtrada = []      # Almacena los datos correspondientes a "chunks" válidos
+    
+    for i, epoch_chunk in enumerate(epoch_chunks):
+        # Filtrar los valores de 'Epoch' en el "chunk" actual
+        indices_chunk = np.where((epoch_chunk >= tiempo_anterior) & (epoch_chunk <= tiempo_posterior))
+        
+        # Si hay valores válidos en el "chunk," almacenarlos
+        if len(indices_chunk) > 0:
+            indices_filtrados.append(i)
+            try:
+                data_filtrada.append(data_chunks[i][indices_chunk])
+            except:
+                print(len(epoch_chunk), len(data_chunks))
+                continue
+    
+    return indices_filtrados, data_filtrada
+
 def seleccionar_datos_en_rango(datos, epoch_datos, tiempo_inicial, tiempo_final):
-    """
-    Selecciona los datos dentro de un rango de tiempo dado.
-    :param datos: Array de datos.
-    :param epoch_datos: Array de epoch correspondiente a los datos.
-    :param tiempo_inicial: Tiempo inicial del rango deseado.
-    :param tiempo_final: Tiempo final del rango deseado.
-    :return: Array de datos dentro del rango de tiempo especificado.
-    """
+
     # Encontrar los índices donde los epoch están dentro del rango deseado
     indices_en_rango = np.where((epoch_datos >= tiempo_inicial) & (epoch_datos <= tiempo_final))
     # Seleccionar los datos correspondientes a los índices en rango
@@ -102,15 +114,7 @@ def seleccionar_datos_en_rango(datos, epoch_datos, tiempo_inicial, tiempo_final)
 
 
 def obtener_archivos_cdf_en_directorio(base_directory):
-    """
-    Genera una lista de todos los archivos CDF en un directorio y sus subdirectorios.
 
-    Args:
-        base_directory (str): La ruta al directorio base.
-
-    Returns:
-        list: Lista de rutas a los archivos CDF encontrados.
-    """
     archivos_cdf = []
     
     for ruta_directorio, _, archivos in os.walk(base_directory):
@@ -124,18 +128,7 @@ def obtener_archivos_cdf_en_directorio(base_directory):
 
 
 def cargar_datos_cdf(archivos, variables_interes):
-    """
-    Carga datos de archivos CDF y filtra por variables de interés y rango de tiempo.
 
-    Args:
-        archivos (list): Lista de rutas a los archivos CDF.
-        variables_interes (list): Lista de nombres de variables de interés.
-        inicio_tiempo (float): Tiempo de inicio del rango de interés (segundos).
-        fin_tiempo (float): Tiempo de finalización del rango de interés (segundos).
-
-    Returns:
-        dict: Un diccionario que contiene los datos de las variables de interés.
-    """
     # Diccionario para almacenar los datos de las variables
     datos_variables = {var: [] for var in variables_interes}
     variables_disponibles = []
@@ -148,13 +141,14 @@ def cargar_datos_cdf(archivos, variables_interes):
 
             # Obtener las variables disponibles en el archivo
             variables_disponibles = archivo_cdf.cdf_info().zVariables
+            #print(variables_disponibles)
             
 
             # Verificar si las variables de interés están presentes en el archivo
             for var in variables_interes:
                 if var in variables_disponibles:
                     
-                    if var in ['epoch_mag_RTN_1min', 'Epoch', 'epoch_mag_RTN', 'epoch']:
+                    if var in ['epoch_mag_RTN_1min', 'Epoch', 'epoch_mag_RTN', 'epoch', 'Epoch_1800'] :
                         variable = cdflib.cdfepoch.unixtime(archivo_cdf.varget(var))
                         datos_variables[var].append(variable)
                         #datos_variables[var]= np.concatenate(datos_variables[var], variable)

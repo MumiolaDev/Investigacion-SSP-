@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import matplotlib.colors as colors
 import pandas as pd
 
+
+
 cdf_campo = obtener_archivos_cdf_en_directorio('FIELDS_1min')
 cdf_EPH = obtener_archivos_cdf_en_directorio('EPHEMERIS')
 
@@ -18,7 +20,6 @@ chunks_latitud = EPH_DAT['HG_LAT']
 chunks_Epoch_B     = MAG_DAT['epoch_mag_RTN_1min']
 chunks_Bv         = MAG_DAT['psp_fld_l2_mag_RTN_1min']
 chunks_B_qf    = MAG_DAT['psp_fld_l2_quality_flags']
-
 
 fechas_perihelio_todas = [
     datetime.fromisoformat('2018-11-05').timestamp(),#1-2
@@ -37,11 +38,9 @@ fechas_perihelio_todas = [
     datetime.fromisoformat('2022-12-11').timestamp(),# 14 -15
     datetime.fromisoformat('2023-03-17').timestamp(),# 15
 ]
-
-SMALL_SIZE =8
-MEDIUM_SIZE = 18
-BIGGER_SIZE = 30
-
+SMALL_SIZE =15
+MEDIUM_SIZE = 15
+BIGGER_SIZE = 25
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
@@ -59,7 +58,7 @@ desv_inter = []
 for n, fecha_referencia in enumerate(fechas_perihelio_todas):
     #fecha_referencia = datetime.fromisoformat('2021-04-29').timestamp()
     tiempo_anterior = fecha_referencia - timedelta(days=40).total_seconds()
-    tiempo_posterior = fecha_referencia + timedelta(days=1).total_seconds()
+    tiempo_posterior = fecha_referencia + timedelta(days=40).total_seconds()
 
     # Filtrar los "chunks" de EPH_DAT
     indices_filtrados_R, data_filtrada_R = filtrar_chunks(chunks_Epoch_R, chunks_R, tiempo_anterior, tiempo_posterior)
@@ -86,92 +85,40 @@ for n, fecha_referencia in enumerate(fechas_perihelio_todas):
     Lat = np.array(datafiltrados_latit[0])
     B = np.array(tmp1)
 
-    R, B = igualar_longitud_arrays(R,B)
-    R, B = eliminar_nan_correspondientes(R, B)
+    Lat, B = igualar_longitud_arrays(Lat,B)
+    Lat, B = eliminar_nan_correspondientes(Lat, B)
 
 
     if B.size != 0:
-        R_bins = np.logspace(np.log10(np.min(R)), np.log10(np.max(R)), 100)
+        Lat_bins = np.linspace(np.min(Lat), np.max(Lat), 100)
         B_bins = np.logspace(np.log10(np.min(B)), np.log10(np.max(B)), 100)
 
-        logx = np.log10(R)
-        logy = np.log10(B)
-        coeffs, Vmatrix = np.polyfit(logx,logy,deg=1, cov= 'unscaled')
-        poly = np.poly1d(coeffs)
-        polinomios.append(poly)
-        Rs_del_pol.append(R)
-        desv_pend.append(np.sqrt(Vmatrix[1 ,1]))
-        desv_inter.append(np.sqrt(Vmatrix[0,0]))
         a = n//5
         b = n%5
         ax = axs[a,b]
-        ax.plot(R, yfit(R, poly), '--', label='y='+str(poly), c='black'  )
-        h, xedges,yedges,im = ax.hist2d(R, B, bins=(R_bins, B_bins), norm= colors.LogNorm(), cmap='plasma', density=True)
+    
+        h, xedges,yedges,im = ax.hist2d(Lat, B, bins=(Lat_bins, B_bins), norm= colors.LogNorm(), cmap='plasma', density=True)
 
         ax.text(0.2, 0.3, f'N={n+1}', horizontalalignment='center', verticalalignment='center', transform=ax.transAxes)
-        ax.set_xscale('log')
+        #ax.set_xscale('log')
         ax.set_yscale('log')
-        ax.set_xlim(0.04,0.9)
-        ax.tick_params(axis='x', labelrotation=35)
+        
+        
 
-        my_ticks = np.logspace(np.log10(np.min(R)), np.log10(np.max(R)), 3)
+        ax.tick_params(axis='x', labelrotation=35)
+        my_ticks = np.linspace(-3.5, 3.5, 3)
         my_labels = ['%.2f' % elem for elem in my_ticks]
         ax.set(xticks = my_ticks, xticklabels=my_labels)
-        date = datetime.fromtimestamp(fecha_referencia).date()
-        ax.legend()
+        
+        ax.set_xlim(-4.2,4.2)
+     
 
-
-fig.supxlabel('Distancia radial en UA')
+fig.supxlabel('Latitud Heliográfica')
 fig.supylabel('Magnitud de campo magnético en nT')
 fig.subplots_adjust(wspace=0,hspace=0, left=0.1, right=0.84,top=0.99,bottom=0.16)
 cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
 fig.autofmt_xdate(rotation=35)
 fig.colorbar(im, cax=cbar_ax,label='Densidad de puntos normalizada')
 #plt.tight_layout()
-#plt.savefig('Gráficos\Finales\Acercamiento.png')    
+#plt.savefig('Gráficos\Finales\Latitudes.png')    
 plt.show()
-
-plt.figure(figsize=(9,9))
-plt.title('Evolución de las pendientes encontradas')
-plt.xlabel('N° Alejamiento')
-plt.ylabel('Pendiente recta ajustada')
-plt.grid(True)
-i=1
-fechas = [] 
-y = []
-for p, t in zip(polinomios, fechas_perihelio_todas):
-    #print(p[0], p[1], p)
-    fechas.append(datetime.fromtimestamp(t))
-    y.append(p[1])
-    i+=1 
-
-plt.tight_layout()
-print(desv_pend)
-#plt.errorbar(np.arange(1,len(y)+1), y, yerr=desv_pend,barsabove=True,capsize=1.)
-#plt.plot(np.arange(1,len(y)+1), y, color='black', marker='o', linestyle='dashed',
-#         linewidth=1, markersize=5) 
-#plt.savefig('Gráficos\Finales\Pendientes2.png')    
-#plt.show()
-
-plt.figure(figsize=(9,9))
-plt.title('Evolución de los interceptos encontradas') 
-plt.xlabel('Número de Acercamientos')
-plt.ylabel('Intercepto recta ajustada')
-plt.grid(True)
-i=1
-x = []
-y = []
-for p, r in zip(polinomios, Rs_del_pol):
-    #print(p[0], p[1], p)
-    x.append(i)
-    y.append(p[0])
-    i+=1
-    
-plt.tight_layout()
-#plt.errorbar(np.arange(1,len(y)+1), y, yerr=desv_inter,barsabove=True,capsize=1.)
-#plt.plot(np.arange(1,len(y)+1), y,color='black', marker='o', linestyle='dashed',
-#         linewidth=1, markersize=5)
-
-
-#plt.savefig('Gráficos\Finales\Interceptos2.png')    
-#plt.show()
