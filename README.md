@@ -11,3 +11,8 @@ Los programas CampoMagnetico.py y Protones.py contienen el tratamiento de los da
 cada uno genera gráficos por acercamiento y realiza un ajuste sobre cada uno de estos para luego analizar la
 evolución temporal de la recta ajustaday confirmar un comportamiento como ley de potencias en función a la
 distancia al sol
+
+## Revisión y propuestas (2026)
+
+En `docs/REVISION_Y_PROPUESTAS.md` hay una revisión del código, un reanálisis corregido con 27 encuentros
+(`Codigo Propuesto/analisis_encuentros.py`) y propuestas de líneas de investigación y de visualización web.
