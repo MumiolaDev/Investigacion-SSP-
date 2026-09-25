@@ -16,7 +16,7 @@ from plotly.subplots import make_subplots
 import psp_datos as pd_psp
 
 AQUI = Path(__file__).parent
-AZUL, NARANJA, AQUA, TINTA, GRIS = "#2a78d6", "#eb6834", "#1baf7a", "#0b0b0b", "#8a8984"
+AZUL, NARANJA, TINTA, GRIS = "#2a78d6", "#eb6834", "#0b0b0b", "#8a8984"
 TRAMO_COLOR = {"acercamiento": AZUL, "alejamiento": NARANJA}
 
 st.set_page_config(page_title="Explorador PSP", page_icon="☀️", layout="wide")
@@ -151,24 +151,24 @@ with tab_ser:
         st.info("No hay datos de campo magnético para este encuentro.")
     else:
         regla = {"1 min": None, "10 min": "10min", "1 h": "1h"}[resol]
-        m = mag.set_index("t")[["BR", "BT", "BN", "B", "R"]]
+        m = mag.set_index("t")[["B", "R"]]
         if regla:
             m = m.resample(regla).mean()
-        fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.04, row_heights=[0.4, 0.35, 0.25])
-        for comp, c in (("BR", AZUL), ("BT", NARANJA), ("BN", AQUA)):
-            fig.add_scattergl(x=m.index, y=m[comp], mode="lines", line=dict(color=c, width=1.2),
-                              name=comp.replace("B", "B<sub>") + "</sub>", row=1, col=1)
-        fig.add_scattergl(x=m.index, y=m.B, mode="lines", line=dict(color=TINTA, width=1.2), name="|B|", row=2, col=1)
-        fig.add_scattergl(x=m.index, y=m.R * pd_psp.UA_EN_RSOL, mode="lines", line=dict(color=GRIS, width=2),
-                          name="R [R☉]", row=3, col=1)
+        escala_log = st.toggle("Escala logarítmica en |B|", value=True)
+        fig = go.Figure()
+        fig.add_scattergl(x=m.index, y=m.B, mode="lines", line=dict(color=TINTA, width=1.3), name="|B|",
+                          customdata=m.R * pd_psp.UA_EN_RSOL,
+                          hovertemplate="%{x|%Y-%m-%d %H:%M}<br>|B| = %{y:.1f} nT<br>R = %{customdata:.1f} R☉<extra></extra>")
         fig.add_vline(x=tp, line=dict(color=GRIS, dash="dot", width=1))
-        fig.update_yaxes(title="B RTN [nT]", row=1, col=1)
-        fig.update_yaxes(title="|B| [nT]", type="log", dtick=1, row=2, col=1)
-        fig.update_yaxes(title="R [R☉]", row=3, col=1)
-        st.plotly_chart(estilo(fig, 680), width="stretch")
-        st.caption("B_R > 0: campo apuntando en sentido opuesto al Sol. Los cambios de signo sostenidos de B_R son cruces "
-                   "de la lámina de corriente heliosférica; las inversiones breves son *switchbacks*. "
-                   "La línea punteada marca el perihelio.")
+        fig.add_annotation(x=tp, y=1, yref="paper", text="perihelio", showarrow=False, yshift=10,
+                           font=dict(color=GRIS, size=11))
+        fig.update_yaxes(title="|B| [nT]", type="log" if escala_log else "linear", dtick=1 if escala_log else None)
+        fig.update_xaxes(title="Tiempo (UT)")
+        st.plotly_chart(estilo(fig, 520).update_layout(showlegend=False, hovermode="closest"), width="stretch")
+        st.caption(f"Magnitud del campo magnético (promedios de {resol}). Pase el cursor para ver la distancia al Sol "
+                   "en cada instante. El crecimiento hacia el perihelio refleja principalmente la caída ~R⁻² del campo; "
+                   "las caídas bruscas y breves suelen ser cruces de la lámina de corriente heliosférica, donde |B| se anula "
+                   "localmente.")
 
 # ---------------------------------------------------------------- |B| vs R
 with tab_br:
@@ -217,10 +217,32 @@ with tab_br:
 
 # ---------------------------------------------------------------- ciclo solar
 with tab_ciclo:
+    with st.expander("¿Cómo leer estos gráficos?", expanded=True):
+        st.markdown("""
+Cada punto resume **un tramo de 40 días** de un encuentro: el **acercamiento** (azul, 40 días antes del perihelio)
+o el **alejamiento** (naranja, 40 días después). En cada tramo se ajusta una ley de potencias
+**|B| = B₁ · Rⁿ** (R en UA) a la magnitud del campo, igual que en la pestaña *|B| vs distancia*.
+
+1. **Índice n**: qué tan rápido cae |B| al alejarse del Sol. Un campo puramente radial daría n = −2
+   (línea discontinua); la espiral de Parker, algo menos empinado. Si n cambiara con la actividad solar,
+   se vería una tendencia; aquí se mantiene en ≈ −1,77 durante todo el ciclo.
+2. **|B| a 1 UA (B₁)**: el ajuste evaluado en R = 1 UA, es decir, la *intensidad global* del campo del
+   viento solar en ese período. **Sí cambia con el ciclo**: ≈ 3,5 nT en el mínimo (2018–2020) y 5–6,5 nT cerca del máximo.
+3. **|B_R| r²**: la componente radial escalada por r², que según Parker se conserva con la distancia.
+   Es un indicador del **flujo magnético abierto** del Sol (Φ ≈ 4π r² |B_R|). Es la única curva que usa una componente
+   y no la magnitud, porque el flujo abierto se define a partir del campo radial.
+4. **Número de manchas solares**: el termómetro clásico de la actividad solar (ciclo 25, máximo en 2024–2025).
+
+La idea es comparar los paneles 2 y 3 con el 4: la sonda "ve" el ciclo solar como un aumento de la
+intensidad del campo, sin que cambie la forma en que el campo decae con la distancia (panel 1).
+""")
     res = cargar_resultados()
     res["anio"] = anio_decimal(res.perihelio + ":00")
     man = cargar_manchas()
-    fig = make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.035)
+    fig = make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.06, subplot_titles=(
+        "1 · Índice n de la ley |B| ∝ Rⁿ", "2 · |B| extrapolado a 1 UA", "3 · Proxy de flujo abierto |B_R| r²",
+        "4 · Número de manchas solares (actividad)"))
+    fig.update_annotations(font=dict(size=13, color=TINTA), x=0, xanchor="left")
     for tramo, d in res.groupby("tramo"):
         c = TRAMO_COLOR[tramo]
         comun = dict(mode="markers", marker=dict(size=8, color=c, line=dict(color="white", width=1)),
@@ -245,7 +267,7 @@ with tab_ciclo:
     fig.update_yaxes(title="|B_R| r² [nT UA²]", row=3, col=1)
     fig.update_yaxes(title="Nº manchas", row=4, col=1)
     fig.update_xaxes(title="Año", row=4, col=1)
-    st.plotly_chart(estilo(fig, 820).update_layout(hovermode="closest"), width="stretch")
+    st.plotly_chart(estilo(fig, 950).update_layout(hovermode="closest", margin=dict(t=90), legend=dict(y=1.07)), width="stretch")
     st.caption("Resultados precalculados con `Codigo Propuesto/analisis_encuentros.py` (ventanas de ±40 días, "
                "barras de error por bootstrap de bloques diarios). La línea punteada naranja marca el encuentro elegido. "
                "|B_R| r² es un proxy del flujo magnético abierto, calculado con r < 0,25 UA.")
