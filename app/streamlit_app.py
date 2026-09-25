@@ -5,6 +5,7 @@ Ejecutar localmente:
     pip install -r requirements.txt
     streamlit run streamlit_app.py
 """
+import re
 from pathlib import Path
 
 import numpy as np
@@ -19,7 +20,29 @@ AQUI = Path(__file__).parent
 AZUL, NARANJA, TINTA, GRIS = "#2a78d6", "#eb6834", "#0b0b0b", "#8a8984"
 TRAMO_COLOR = {"acercamiento": AZUL, "alejamiento": NARANJA}
 
-st.set_page_config(page_title="Explorador PSP", page_icon="☀️", layout="wide")
+st.set_page_config(page_title="Explorador PSP", page_icon="☀️", layout="wide", initial_sidebar_state="collapsed")
+
+# Detección de teléfono por User-Agent: ajusta alturas de gráficos y desactiva el arrastre (zoom/pan),
+# que en pantallas táctiles impide desplazar la página. El resto del diseño se adapta con CSS.
+_ua = st.context.headers.get("User-Agent", "") or ""
+ES_MOVIL = bool(re.search(r"Mobi|Android|iPhone|iPod", _ua))
+
+st.markdown("""
+<style>
+.block-container {padding-top: 2rem; padding-bottom: 2rem;}
+h1.titulo {font-size: clamp(1.35rem, 4.5vw, 2.3rem); line-height: 1.2; margin: 0 0 .25rem 0; padding: 0;}
+.kpis {display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .6rem; margin: .5rem 0 1rem 0;}
+.kpi {background: #f1f0ec; border-radius: 10px; padding: .6rem .8rem;}
+.kpi .etq {font-size: .8rem; color: #52514e;}
+.kpi .val {font-size: clamp(1.15rem, 4vw, 1.6rem); font-weight: 600; color: #0b0b0b; line-height: 1.3;}
+.kpi .sub {font-size: .75rem; color: #6b6a66;}
+@media (max-width: 640px) {
+  .block-container {padding-left: .8rem; padding-right: .8rem; padding-top: 1rem;}
+  .kpis {grid-template-columns: repeat(2, 1fr);}
+  button[data-baseweb="tab"] {padding-left: .35rem; padding-right: .35rem;}
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------- datos (con caché)
@@ -51,13 +74,30 @@ def cargar_manchas():
     return pd.read_csv(AQUI / "datos" / "manchas_silso_mensual.csv")
 
 
-def estilo(fig, alto):
-    fig.update_layout(template="plotly_white", height=alto, margin=dict(l=10, r=10, t=30, b=10),
-                      legend=dict(orientation="h", yanchor="bottom", y=1.01, x=0),
-                      hovermode="x unified", font=dict(size=13))
-    fig.update_xaxes(showgrid=True, gridcolor="#ecebe8")
-    fig.update_yaxes(showgrid=True, gridcolor="#ecebe8")
+def estilo(fig, alto, alto_movil=None):
+    fig.update_layout(template="plotly_white", height=(alto_movil or alto) if ES_MOVIL else alto,
+                      margin=dict(l=4, r=4, t=30, b=4) if ES_MOVIL else dict(l=10, r=10, t=30, b=10),
+                      legend=dict(orientation="h", yanchor="bottom", y=1.01, x=0, font=dict(size=11 if ES_MOVIL else 12)),
+                      hovermode="closest", font=dict(size=11 if ES_MOVIL else 13),
+                      dragmode=False if ES_MOVIL else "zoom")
+    fig.update_xaxes(showgrid=True, gridcolor="#ecebe8", automargin=True)
+    fig.update_yaxes(showgrid=True, gridcolor="#ecebe8", automargin=True)
     return fig
+
+
+CONFIG_PLOTLY = {"displaylogo": False, "scrollZoom": False, "responsive": True,
+                 "displayModeBar": not ES_MOVIL, "doubleClick": "reset"}
+
+
+def mostrar(fig):
+    st.plotly_chart(fig, width="stretch", config=CONFIG_PLOTLY)
+
+
+def kpis(items):
+    """Tarjetas de métricas en grilla CSS: 4 columnas en escritorio, 2 en teléfono."""
+    html = "".join(f'<div class="kpi"><div class="etq">{e}</div><div class="val">{v}</div>'
+                   + (f'<div class="sub">{s}</div>' if s else "") + "</div>" for e, v, s in items)
+    st.markdown(f'<div class="kpis">{html}</div>', unsafe_allow_html=True)
 
 
 def anio_decimal(t):
@@ -71,24 +111,23 @@ per = pd_psp.perihelios(pos)
 fin = cargar_fin_de_datos()
 ahora = pd.Timestamp.now(tz="UTC")
 
-st.sidebar.title("☀️ Explorador PSP")
 etiquetas = {k: f"E{k:02d} · {r.t:%Y-%m-%d} · {r.R * pd_psp.UA_EN_RSOL:.1f} R☉"
              + ("" if r.t < ahora else " (futuro)") for k, r in per.iterrows()}
 disponibles = [k for k, r in per.iterrows() if r.t + pd.Timedelta(days=1) < fin]
-enc = st.sidebar.selectbox("Encuentro", list(per.index), index=list(per.index).index(disponibles[-1]),
-                           format_func=etiquetas.get)
-dias = st.sidebar.slider("Ventana alrededor del perihelio [días]", 2, 40, 10)
-resol = st.sidebar.select_slider("Promedio para las series de tiempo", ["1 min", "10 min", "1 h"], value="10 min")
-st.sidebar.caption(f"Campo magnético disponible en CDAWeb hasta **{fin:%Y-%m-%d}**.")
-st.sidebar.markdown("---")
-st.sidebar.caption("Datos: NASA/CDAWeb vía HAPI · FIELDS (Bale et al. 2016) · SILSO. "
-                   "Código: rama `revision-2026`.")
+
+st.markdown("##### ☀️ Explorador de Parker Solar Probe")
+with st.container(border=True):
+    c_enc, c_dias, c_res = st.columns([2, 1.3, 1])
+    enc = c_enc.selectbox("Encuentro", list(per.index), index=list(per.index).index(disponibles[-1]),
+                          format_func=etiquetas.get)
+    dias = c_dias.slider("Ventana alrededor del perihelio [días]", 2, 40, 10)
+    resol = c_res.select_slider("Promedio de la serie |B|(t)", ["1 min", "10 min", "1 h"], value="10 min")
 
 tp = per.loc[enc, "t"]
 t0, t1 = tp - pd.Timedelta(days=dias), min(tp + pd.Timedelta(days=dias), fin)
 
 # ---------------------------------------------------------------- encabezado
-st.title(f"Encuentro {enc}: perihelio del {tp:%d-%m-%Y %H:%M} UT")
+st.markdown(f'<h1 class="titulo">Encuentro {enc} · perihelio {tp:%d-%m-%Y %H:%M} UT</h1>', unsafe_allow_html=True)
 
 hay_datos = tp - pd.Timedelta(days=1) < fin
 mag = None
@@ -98,31 +137,31 @@ if hay_datos:
     except Exception as e:
         st.error(f"No se pudo descargar el campo magnético desde CDAWeb: {e}")
 
-c1, c2, c3, c4 = st.columns(4)
-c1.metric(f"Distancia mínima ({per.loc[enc, 'R']:.4f} UA)", f"{per.loc[enc, 'R'] * pd_psp.UA_EN_RSOL:.2f} R☉")
+items = [("Distancia mínima", f"{per.loc[enc, 'R'] * pd_psp.UA_EN_RSOL:.2f} R☉", f"{per.loc[enc, 'R']:.4f} UA")]
 if mag is not None and len(mag):
-    c2.metric("|B| máximo (1 min)", f"{mag.B.max():,.0f} nT")
-    c3.metric("|B| mediano en la ventana", f"{mag.B.median():,.1f} nT")
-    c4.metric("Cobertura de datos", f"{len(mag) / ((t1 - t0).total_seconds() / 60):.0%}")
-else:
-    c2.info("Sin datos de campo para este encuentro (aún no publicados).")
+    items += [("|B| máximo (1 min)", f"{mag.B.max():,.0f} nT", None),
+              ("|B| mediano", f"{mag.B.median():,.1f} nT", f"±{dias} días"),
+              ("Cobertura de datos", f"{len(mag) / ((t1 - t0).total_seconds() / 60):.0%}", None)]
+kpis(items)
+if mag is None or not len(mag):
+    st.info(f"Sin datos de campo magnético para este encuentro: CDAWeb los tiene publicados hasta el {fin:%Y-%m-%d}.")
 
 tab_orb, tab_ser, tab_br, tab_ciclo, tab_info = st.tabs(
-    ["🛰️ Órbita", "📈 Series de tiempo", "📉 |B| vs distancia", "🔄 Ciclo solar", "ℹ️ Método y fuentes"])
+    ["🛰️ Órbita", "📈 |B|(t)", "📉 |B| vs R", "🔄 Ciclo solar", "ℹ️ Método"])
 
 # ---------------------------------------------------------------- órbita
 with tab_orb:
     izq, der = st.columns([3, 2])
     with der:
         dia_rel = st.slider("Posición de la sonda: días desde el perihelio", -dias, dias, 0)
-        st.markdown(
+        t_son = tp + pd.Timedelta(days=dia_rel)
+        fila = pos.iloc[(pos.t - t_son).abs().argmin()]
+        kpis([(f"R el {fila.t:%d-%m-%Y %H:%M} UT", f"{fila.R * pd_psp.UA_EN_RSOL:.1f} R☉", f"{fila.R:.3f} UA")])
+        st.caption(
             "Plano de la eclíptica en coordenadas **heliocéntricas inerciales (HGI)**. "
             "En gris, la trayectoria completa de la misión; en azul, la ventana elegida. "
             "Cerca del perihelio la sonda casi **co-rota** con el Sol: recorre ~180° de longitud "
             "en pocos días, algo que se aprecia moviendo el deslizador.")
-        t_son = tp + pd.Timedelta(days=dia_rel)
-        fila = pos.iloc[(pos.t - t_son).abs().argmin()]
-        st.metric(f"R el {fila.t:%d-%m-%Y %H:%M} UT", f"{fila.R * pd_psp.UA_EN_RSOL:.1f} R☉ · {fila.R:.3f} UA")
     with izq:
         fig = go.Figure()
         th = np.linspace(0, 2 * np.pi, 361)
@@ -131,7 +170,7 @@ with tab_orb:
                             name=nombre, hoverinfo="name", showlegend=False)
             fig.add_annotation(x=a * np.cos(np.pi / 4), y=a * np.sin(np.pi / 4), text=nombre, showarrow=False,
                                font=dict(color=GRIS, size=11), yshift=8)
-        pas = pos[pos.t <= ahora]
+        pas = pos[pos.t <= ahora].iloc[::6]  # 6 h basta para la trayectoria de fondo
         fig.add_scatter(x=pas.x, y=pas.y, mode="lines", line=dict(color="#c7c6c0", width=1), name="Misión", hoverinfo="skip")
         v = pos[(pos.t >= tp - pd.Timedelta(days=dias)) & (pos.t <= tp + pd.Timedelta(days=dias))]
         fig.add_scatter(x=v.x, y=v.y, mode="lines", line=dict(color=AZUL, width=3), name="Ventana",
@@ -141,9 +180,8 @@ with tab_orb:
         fig.add_scatter(x=[fila.x], y=[fila.y], mode="markers", marker=dict(size=11, color=NARANJA, line=dict(color="white", width=2)),
                         name="PSP", hovertemplate=f"PSP · {fila.t:%Y-%m-%d %H:%M}<extra></extra>")
         fig.update_xaxes(range=[-1.1, 1.1], title="x HGI [UA]", zeroline=False)
-        fig.update_yaxes(range=[-1.1, 1.1], title="y HGI [UA]", scaleanchor="x", zeroline=False)
-        estilo(fig, 620).update_layout(hovermode="closest", showlegend=False)
-        st.plotly_chart(fig, width="stretch")
+        fig.update_yaxes(range=[-1.1, 1.1], title="y HGI [UA]", scaleanchor="x", constrain="domain", zeroline=False)
+        mostrar(estilo(fig, 620, 380).update_layout(showlegend=False))
 
 # ---------------------------------------------------------------- series de tiempo
 with tab_ser:
@@ -164,8 +202,8 @@ with tab_ser:
                            font=dict(color=GRIS, size=11))
         fig.update_yaxes(title="|B| [nT]", type="log" if escala_log else "linear", dtick=1 if escala_log else None)
         fig.update_xaxes(title="Tiempo (UT)")
-        st.plotly_chart(estilo(fig, 520).update_layout(showlegend=False, hovermode="closest"), width="stretch")
-        st.caption(f"Magnitud del campo magnético (promedios de {resol}). Pase el cursor para ver la distancia al Sol "
+        mostrar(estilo(fig, 520, 340).update_layout(showlegend=False))
+        st.caption(f"Magnitud del campo magnético (promedios de {resol}). Pase el cursor (o toque la curva) para ver la distancia al Sol "
                    "en cada instante. El crecimiento hacia el perihelio refleja principalmente la caída ~R⁻² del campo; "
                    "las caídas bruscas y breves suelen ser cruces de la lámina de corriente heliosférica, donde |B| se anula "
                    "localmente.")
@@ -192,32 +230,30 @@ with tab_br:
                 filas.append((tramo, n, 10**a))
                 xx = np.array([d.R.min(), d.R.max()])
                 fig.add_scatter(x=np.log10(g.R), y=np.log10(g.B), mode="markers", marker=dict(size=8, color=TRAMO_COLOR[tramo],
-                                line=dict(color="white", width=1.5)), name=f"{tramo}: medianas",
+                                line=dict(color="white", width=1.5)), legendgroup=tramo, showlegend=False,
                                 hovertemplate="R = %{customdata[0]:.3f} UA<br>|B| = %{customdata[1]:.1f} nT<extra></extra>",
                                 customdata=np.c_[g.R, g.B])
                 fig.add_scatter(x=np.log10(xx), y=a + n * np.log10(xx), mode="lines",
-                                line=dict(color=TRAMO_COLOR[tramo], width=2), name=f"{tramo}: n = {n:.2f}")
+                                line=dict(color=TRAMO_COLOR[tramo], width=2), legendgroup=tramo, name=f"{tramo.capitalize()} (n = {n:.2f})")
             if mostrar_parker:
                 rr = np.logspace(np.log10(mag.R.min()), np.log10(mag.R.max()), 50)
                 r_ref = np.median(mag.R)
                 fig.add_scatter(x=np.log10(rr), y=np.log10(pd_psp.parker_B(rr, np.median(mag.B[np.isclose(mag.R, r_ref, rtol=0.05)]), r_ref, V)),
-                                mode="lines", line=dict(color=TINTA, dash="dash", width=1.5), name=f"Parker, V = {V} km/s")
+                                mode="lines", line=dict(color=TINTA, dash="dash", width=1.5), name=f"Parker ({V} km/s)")
             ticks_R = [0.05, 0.07, 0.1, 0.15, 0.2, 0.3, 0.5]
             ticks_B = [1, 3, 10, 30, 100, 300, 1000, 3000]
             fig.update_xaxes(title="Distancia al Sol R [UA]", tickvals=np.log10(ticks_R), ticktext=ticks_R)
             fig.update_yaxes(title="|B| [nT]", tickvals=np.log10(ticks_B), ticktext=ticks_B)
-            st.plotly_chart(estilo(fig, 560).update_layout(hovermode="closest"), width="stretch")
+            mostrar(estilo(fig, 560, 400))
         with der:
-            for tramo, n, b1 in filas:
-                st.metric(f"n ({tramo})", f"{n:.2f}")
-                st.caption(f"|B| extrapolado a 1 UA ≈ {b1:.1f} nT")
+            kpis([(f"n ({tramo})", f"{n:.2f}", f"|B|(1 UA) ≈ {b1:.1f} nT") for tramo, n, b1 in filas])
             st.caption("Ajuste en log-log sobre medianas por bin de log R, con R interpolada en el tiempo de cada medición. "
                        "Para ventanas cortas el rango en R es pequeño y la pendiente es poco confiable; "
                        "use 30–40 días para comparar con la pestaña *Ciclo solar*.")
 
 # ---------------------------------------------------------------- ciclo solar
 with tab_ciclo:
-    with st.expander("¿Cómo leer estos gráficos?", expanded=True):
+    with st.expander("¿Cómo leer estos gráficos?", expanded=not ES_MOVIL):
         st.markdown("""
 Cada punto resume **un tramo de 40 días** de un encuentro: el **acercamiento** (azul, 40 días antes del perihelio)
 o el **alejamiento** (naranja, 40 días después). En cada tramo se ajusta una ley de potencias
@@ -242,7 +278,7 @@ intensidad del campo, sin que cambie la forma en que el campo decae con la dista
     fig = make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.06, subplot_titles=(
         "1 · Índice n de la ley |B| ∝ Rⁿ", "2 · |B| extrapolado a 1 UA", "3 · Proxy de flujo abierto |B_R| r²",
         "4 · Número de manchas solares (actividad)"))
-    fig.update_annotations(font=dict(size=13, color=TINTA), x=0, xanchor="left")
+    fig.update_annotations(font=dict(size=12 if ES_MOVIL else 13, color=TINTA), x=0, xanchor="left")
     for tramo, d in res.groupby("tramo"):
         c = TRAMO_COLOR[tramo]
         comun = dict(mode="markers", marker=dict(size=8, color=c, line=dict(color="white", width=1)),
@@ -267,7 +303,8 @@ intensidad del campo, sin que cambie la forma en que el campo decae con la dista
     fig.update_yaxes(title="|B_R| r² [nT UA²]", row=3, col=1)
     fig.update_yaxes(title="Nº manchas", row=4, col=1)
     fig.update_xaxes(title="Año", row=4, col=1)
-    st.plotly_chart(estilo(fig, 950).update_layout(hovermode="closest", margin=dict(t=90), legend=dict(y=1.07)), width="stretch")
+    estilo(fig, 950, 860).update_layout(margin=dict(t=90 if not ES_MOVIL else 100), legend=dict(y=1.07 if not ES_MOVIL else 1.09))
+    mostrar(fig)
     st.caption("Resultados precalculados con `Codigo Propuesto/analisis_encuentros.py` (ventanas de ±40 días, "
                "barras de error por bootstrap de bloques diarios). La línea punteada naranja marca el encuentro elegido. "
                "|B_R| r² es un proxy del flujo magnético abierto, calculado con r < 0,25 UA.")
@@ -300,3 +337,7 @@ no se separan eyecciones de masa coronal ni tipos de viento.
   Front. Astron. Space Sci. 9, 1058810 — inspiración para esta app.
 - Número de manchas: SILSO, Royal Observatory of Belgium.
 """)
+
+st.divider()
+st.caption("Datos: NASA/CDAWeb vía HAPI · FIELDS (Bale et al. 2016) · SILSO. "
+           "Código: rama `revision-2026` de mumioladev/investigacion-ssp-.")

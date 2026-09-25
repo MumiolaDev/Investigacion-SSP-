@@ -7,10 +7,15 @@ vienen precalculados en `datos/resultados_por_encuentro.csv` (generado con
 
 ## Pestañas
 - **Órbita**: trayectoria en el plano de la eclíptica (HGI), con la ventana del encuentro y la posición de la sonda.
-- **Series de tiempo**: B_R, B_T, B_N, |B| y R alrededor del perihelio.
-- **|B| vs distancia**: ajuste |B| ∝ Rⁿ (acercamiento y alejamiento) y espiral de Parker de referencia.
+- **|B|(t)**: magnitud del campo alrededor del perihelio (la distancia R aparece al pasar el cursor o tocar la curva).
+- **|B| vs R**: ajuste |B| ∝ Rⁿ (acercamiento y alejamiento) y espiral de Parker de referencia.
 - **Ciclo solar**: n, |B| a 1 UA y |B_R| r² para los 27 encuentros, junto al número de manchas.
 - **Método y fuentes**.
+
+## Uso en teléfonos
+Los controles están en el área principal (no en la barra lateral, que en móvil queda oculta).
+La app detecta teléfonos por el *User-Agent*: reduce la altura de los gráficos, oculta la barra de
+herramientas de Plotly y desactiva el zoom por arrastre para que deslizar el dedo desplace la página.
 
 ## Ejecutar localmente
 ```bash
