@@ -7,7 +7,7 @@ vienen precalculados en `datos/resultados_por_encuentro.csv` (generado con
 
 ## Pestañas
 - **Órbita**: trayectoria en el plano de la eclíptica (HGI), con la ventana del encuentro y la posición de la sonda.
-- **|B|(t)**: magnitud del campo alrededor del perihelio (la distancia R aparece al pasar el cursor o tocar la curva).
+- **|B|(t)**: magnitud del campo alrededor del perihelio junto al modelo B₁·R(t)ⁿ ajustado, y el cociente |B|/modelo (resalta cruces de lámina de corriente y estructuras transitorias).
 - **|B| vs R**: ajuste |B| ∝ Rⁿ (acercamiento y alejamiento) y espiral de Parker de referencia.
 - **Ciclo solar**: n, |B| a 1 UA y |B_R| r² para los 27 encuentros, junto al número de manchas.
 - **Método y fuentes**.
